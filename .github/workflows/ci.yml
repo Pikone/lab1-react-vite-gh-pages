@@ -30,30 +30,34 @@
             run: npm run test # Запускаем ваши тесты Vitest
             # Если тесты не проходят, этот шаг завершится ошибкой, и весь workflow будет считаться проваленным.
 
-      deploy:
-        name: Deploy to GitHub Pages
-        needs: test # Этот job зависит от успешного выполнения job 'test'. Деплой не начнется, если тесты провалились.
-        if: success() && github.ref == 'refs/heads/main' # Деплоить только если тесты прошли и это ветка main
-        runs-on: ubuntu-latest
+deploy:
+  name: Deploy to GitHub Pages
+  needs: test
+  if: success() && github.ref == 'refs/heads/main'
+  runs-on: ubuntu-latest
 
-        steps:
-          - name: Checkout code
-            uses: actions/checkout@v4
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-          - name: Set up Node.js
-            uses: actions/setup-node@v4
-            with:
-              node-version: '20'
-              cache: 'npm'
+    - name: Configure Git identity  # ← НОВЫЙ ШАГ
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          - name: Install dependencies
-            run: npm install
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
 
-          - name: Build project
-            run: npm run build # Собираем проект для деплоя
+    - name: Install dependencies
+      run: npm install
 
-          - name: Deploy to GitHub Pages
-            run: npm run deploy # Запускаем скрипт деплоя gh-pages
-            env:
-              GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Используем встроенный токен GitHub для аутентификации
-                                                    # gh-pages обычно использует этот токен по умолчанию.
+    - name: Build project
+      run: npm run build
+
+    - name: Deploy to GitHub Pages
+      run: npm run deploy
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
