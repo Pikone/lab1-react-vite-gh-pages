@@ -3,10 +3,10 @@
     on:
       push:
         branches:
-          - gh-pages # Запускать workflow при пуше в ветку gh-pages
+          - main # Запускать workflow при пуше в ветку main
       pull_request:
         branches:
-          - gh-pages # Запускать workflow при создании/обновлении pull request в ветку gh-pages
+          - main # Запускать workflow при создании/обновлении pull request в ветку main
 
     jobs:
       test:
@@ -33,7 +33,7 @@
       deploy:
         name: Deploy to GitHub Pages
         needs: test # Этот job зависит от успешного выполнения job 'test'. Деплой не начнется, если тесты провалились.
-        if: success() && github.ref == 'refs/heads/gh-pages' # Деплоить только если тесты прошли и это ветка gh-pages
+        if: success() && github.ref == 'refs/heads/main' # Деплоить только если тесты прошли и это ветка main
         runs-on: ubuntu-latest
 
         steps:
