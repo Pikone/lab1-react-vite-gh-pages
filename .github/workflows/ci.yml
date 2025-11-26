@@ -39,11 +39,8 @@ deploy:
   steps:
     - name: Checkout code
       uses: actions/checkout@v4
-
-    - name: Configure Git identity  # ← НОВЫЙ ШАГ
-      run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      with:
+        persist-credentials: true  # ← КЛЮЧЕВОЙ ПАРАМЕТР
 
     - name: Set up Node.js
       uses: actions/setup-node@v4
