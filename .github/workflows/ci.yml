@@ -30,34 +30,34 @@
             run: npm run test # Запускаем ваши тесты Vitest
             # Если тесты не проходят, этот шаг завершится ошибкой, и весь workflow будет считаться проваленным.
 
-            deploy:
-              name: Deploy to GitHub Pages
-              needs: test
-              if: success() && github.ref == 'refs/heads/main'
-              runs-on: ubuntu-latest
+        deploy:
+          name: Deploy to GitHub Pages
+          needs: test
+          if: success() && github.ref == 'refs/heads/main'
+          runs-on: ubuntu-latest
 
-              steps:
-                - name: Checkout code
-                  uses: actions/checkout@v4
+          steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
 
-                - name: Configure Git identity  # ← НОВЫЙ ШАГ
-                  run: |
-                    git config --global user.name "github-actions[bot]"
-                    git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            - name: Configure Git identity  # ← НОВЫЙ ШАГ
+              run: |
+                git config --global user.name "github-actions[bot]"
+                git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-                - name: Set up Node.js
-                  uses: actions/setup-node@v4
-                  with:
-                    node-version: '20'
-                    cache: 'npm'
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                node-version: '20'
+                cache: 'npm'
 
-                - name: Install dependencies
-                  run: npm install
+            - name: Install dependencies
+              run: npm install
 
-                - name: Build project
-                  run: npm run build
+            - name: Build project
+              run: npm run build
 
-                - name: Deploy to GitHub Pages
-                  run: npm run deploy
-                  env:
-                    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: Deploy to GitHub Pages
+              run: npm run deploy
+              env:
+                GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
