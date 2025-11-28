@@ -1,5 +1,5 @@
 // src/components/Table.tsx
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 const Table = () => {
   const [albums, setAlbums] = useState<any[]>([]);
