@@ -8,7 +8,6 @@ const mockAlbums = [
   { userId: 1, id: 2, title: "sunt qui excepturi placeat culpa" },
 ];
 
-// Мокаем fetch в браузерном окружении
 window.fetch = vi.fn();
 
 test('loads and displays first album title', async () => {

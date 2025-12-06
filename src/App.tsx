@@ -2,7 +2,7 @@
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import Counter from './components/Counter';
-import Table from './components/Table'; // ← импортируем новый компонент
+import Table from './components/Table';
 import './App.css';
 
 function App() {
@@ -19,7 +19,6 @@ function App() {
       <h1>Vite + React + Git push</h1>
       <Counter />
       
-      {/* Вставляем наш компонент с таблицей */}
       <Table />
 
       <p className="read-the-docs">

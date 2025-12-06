@@ -1,10 +1,26 @@
 // src/components/Table.tsx
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+
+interface Album {
+  userId: number;
+  id: number;
+  title: string;
+}
 
 const Table = () => {
-  const [albums, setAlbums] = useState<any[]>([]);
+  const [albums, setAlbums] = useState<Album[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
+
+  const sortedAlbums = useMemo(() => {
+    if (!sortOrder) return albums;
+    return [...albums].sort((a, b) => {
+      return sortOrder === 'asc'
+        ? a.title.localeCompare(b.title)
+        : b.title.localeCompare(a.title);
+    });
+  }, [albums, sortOrder]);
 
   const fetchAlbums = async () => {
     setLoading(true);
@@ -12,12 +28,23 @@ const Table = () => {
     try {
       const res = await fetch('https://jsonplaceholder.typicode.com/albums');
       if (!res.ok) throw new Error('Failed to fetch albums');
-      const data: any[] = await res.json();
+      const data: Album[] = await res.json();
       setAlbums(data);
+      setSortOrder(null); // сброс сортировки при новой загрузке
     } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const toggleSort = () => {
+    if (sortOrder === null) {
+      setSortOrder('asc');
+    } else if (sortOrder === 'asc') {
+      setSortOrder('desc');
+    } else {
+      setSortOrder(null);
     }
   };
 
@@ -29,7 +56,7 @@ const Table = () => {
 
       {error && <p style={{ color: 'red', marginTop: '10px' }}>Error: {error}</p>}
 
-      {albums.length > 0 && (
+      {sortedAlbums.length > 0 && (
         <div style={{ marginTop: '20px' }}>
           <h2>Albums List:</h2>
           <table style={{
@@ -42,11 +69,22 @@ const Table = () => {
               <tr>
                 <th style={{ border: '1px solid #ccc', padding: '8px' }}>ID</th>
                 <th style={{ border: '1px solid #ccc', padding: '8px' }}>User ID</th>
-                <th style={{ border: '1px solid #ccc', padding: '8px' }}>Title</th>
+                <th
+                  style={{
+                    border: '1px solid #ccc',
+                    padding: '8px',
+                    cursor: 'pointer',
+                    backgroundColor: sortOrder ? '#f0f0f0' : 'inherit'
+                  }}
+                  onClick={toggleSort}
+                >
+                  Title
+                  {sortOrder === 'asc' ? ' ▲' : sortOrder === 'desc' ? ' ▼' : ''}
+                </th>
               </tr>
             </thead>
             <tbody>
-              {albums.map(album => (
+              {sortedAlbums.map(album => (
                 <tr key={album.id}>
                   <td style={{ border: '1px solid #ccc', padding: '8px' }}>{album.id}</td>
                   <td style={{ border: '1px solid #ccc', padding: '8px' }}>{album.userId}</td>
